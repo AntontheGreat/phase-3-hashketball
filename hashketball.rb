@@ -127,3 +127,72 @@ def game_hash
 end
 
 # Write code here
+def get_players
+  game_hash.flat_map { |home_away, team| team[:players] } 
+end
+
+def get_player_by_name(player_name)
+  get_players.find { |player| player[:player_name] == player_name }
+end
+
+def num_points_scored(player_name)
+  get_player_by_name(player_name)[:points]
+end
+
+def shoe_size(player_name)
+  get_player_by_name(player_name)[:shoe]
+end
+
+def team_colors(team)
+  game_hash.each do |home_away, team_data|
+    return team_data[:colors] if team_data[:team_name] == team
+  end
+end
+
+def team_names
+  game_hash.map {|home_away, keys| keys[:team_name]}
+end
+
+def player_numbers(team_name)
+  game_hash.each do |_team, team_data|
+    return team_data[:players].map { |player| player[:number] } if team_data[:team_name] == team_name
+  end
+  # Return an empty array if team is not found
+  []
+end
+
+def player_stats(player_name)
+  player = get_player_by_name(player_name)
+  {
+    player_name: player[:player_name],
+    number: player[:number],
+    shoe: player[:shoe],
+    points: player[:points],
+    rebounds: player[:rebounds],
+    assists: player[:assists],
+    steals: player[:steals],
+    blocks: player[:blocks],
+    slam_dunks: player[:slam_dunks]
+  }
+end
+
+def player_with_largest_shoe
+  largest_shoe_size = 0
+  player_with_largest_shoe = nil
+
+  game_hash.values.each do |team|
+    team[:players].each do |player|
+      if player[:shoe] > largest_shoe_size
+        largest_shoe_size = player[:shoe]
+        player_with_largest_shoe = player
+      end
+    end
+  end
+
+  player_with_largest_shoe
+end
+
+def big_shoe_rebounds
+  player = player_with_largest_shoe
+  player[:rebounds] if player
+end
